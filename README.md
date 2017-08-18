@@ -1,0 +1,1 @@
+# xamarin-stripe-ios
