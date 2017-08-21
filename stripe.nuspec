@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <!-- Required elements-->
+        <id>Ricardo.Stripe.iOS</id>
+        <version>11.2.0</version>
+        <description>Xamarin Binding Library - Stripe iOS SDK</description>
+        <authors>Nicolas Bonnet, Branislav Havrila</authors>
+        <owners>ricardo.ch AG</owners>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <title>Stripe iOS</title>
+        <releaseNotes>Stripe iOS SDK v11.2.0</releaseNotes>
+        <summary>Xamarin Binding Library - Stripe iOS SDK</summary>
+        <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
+        <projectUrl>https://github.com/ricardo-ch/xamarin-stripe-ios/</projectUrl>
+        <copyright>Copyright (c) 2017 ricardo.ch AG</copyright>
+        <tags>Xamarin.iOS, stripe</tags>
+    </metadata>
+    <!-- Optional 'files' node -->
+    <files>
+        <file src="Ricardo.Stripe.iOS/Ricardo.Stripe.iOS/bin/Release/Ricardo.Stripe.iOS.dll" target="lib/Xamarin.iOS10/Ricardo.Stripe.iOS.dll" />
+    </files>
+</package>
