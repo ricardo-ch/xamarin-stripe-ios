@@ -20,7 +20,8 @@ namespace Ricardo.Stripe.iOS.Sample
         {
             // Override point for customization after application launch.
             // If not required for your application you can safely delete this method
-
+            STPTheme.DefaultTheme.AccentColor = UIColor.Red;
+            STPPaymentConfiguration.SharedConfiguration().PublishableKey = "your_key";
             return true;
         }
 
