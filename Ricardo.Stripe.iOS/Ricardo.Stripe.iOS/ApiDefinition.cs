@@ -1,5 +1,4 @@
 ﻿using System;
-
 using UIKit;
 using Foundation;
 using ObjCRuntime;
@@ -54,13 +53,11 @@ namespace Ricardo.Stripe.iOS
     [BaseType(typeof(NSObject))]
     interface STPAPIResponseDecodable
     {
-        //TODO static method inside protocol
         // @required +(NSArray * _Nonnull)requiredFields;
         [Abstract]
         [Export("requiredFields")]
         NSObject[] RequiredFields { get; }
 
-        //TODO static method inside protocol
         // @required +(instancetype _Nullable)decodedObjectFromAPIResponse:(NSDictionary * _Nullable)response;
         [Abstract]
         [Export("decodedObjectFromAPIResponse:")]
@@ -206,7 +203,7 @@ namespace Ricardo.Stripe.iOS
         [Export("paymentRequestWithMerchantIdentifier:")]
         PKPaymentRequest PaymentRequestWithMerchantIdentifier(string merchantIdentifier);
 
-        // +(PKPaymentRequest * _Nonnull)paymentRequestWithMerchantIdentifier:(NSString * _Nonnull)merchantIdentifier country:(NSString * _Nonnull)countryCode currency:(NSString * _Nonnull)currencyCode __attribute__((availability(ios, introduced=8.0)));
+        // +(PKPaymentRequest * _Nonnull)paymentRequestWithMerchantIdentifier:(NSString * _Nonnull)merchantIdentifier country:(NSString * _Nonnull)countryCode currency:(NSString * _Nonnull)currencyCode __attribute__((availability(ios, introduced=8_0)));
         [Introduced(PlatformName.iOS, 8, 0)]
         [Static]
         [Export("paymentRequestWithMerchantIdentifier:country:currency:")]
@@ -227,14 +224,14 @@ namespace Ricardo.Stripe.iOS
         void RetrieveSourceWithId(string identifier, string secret, STPSourceCompletionBlock completion);
 
         // -(void)startPollingSourceWithId:(NSString * _Nonnull)identifier clientSecret:(NSString * _Nonnull)secret timeout:(NSTimeInterval)timeout completion:(STPSourceCompletionBlock _Nonnull)completion __attribute__((deprecated("You should poll your own backend to update based on source status change webhook events it may receive."))) __attribute__((availability(ios_app_extension, unavailable))) __attribute__((availability(macos_app_extension, unavailable)));
-        //[Unavailable(PlatformName.iOSAppExtension)]
-        //[Unavailable(PlatformName.MacOSXAppExtension)]
+        //[Unavailable (PlatformName.iOSAppExtension)]
+        //[Unavailable (PlatformName.MacOSXAppExtension)]
         [Export("startPollingSourceWithId:clientSecret:timeout:completion:")]
         void StartPollingSourceWithId(string identifier, string secret, double timeout, STPSourceCompletionBlock completion);
 
         // -(void)stopPollingSourceWithId:(NSString * _Nonnull)identifier __attribute__((deprecated(""))) __attribute__((availability(ios_app_extension, unavailable))) __attribute__((availability(macos_app_extension, unavailable)));
-        //[Unavailable(PlatformName.iOSAppExtension)]
-        //[Unavailable(PlatformName.MacOSXAppExtension)]
+        //[Unavailable (PlatformName.iOSAppExtension)]
+        //[Unavailable (PlatformName.MacOSXAppExtension)]
         [Export("stopPollingSourceWithId:")]
         void StopPollingSourceWithId(string identifier);
     }
@@ -248,6 +245,20 @@ namespace Ricardo.Stripe.iOS
         [Static]
         [Export("handleStripeURLCallbackWithURL:")]
         bool HandleStripeURLCallbackWithURL(NSUrl url);
+    }
+
+    // @interface ApplePay (STPAPIClient)
+    [Category]
+    [BaseType(typeof(STPAPIClient))]
+    interface STPAPIClient_ApplePay
+    {
+        // -(void)createTokenWithPayment:(PKPayment * _Nonnull)payment completion:(STPTokenCompletionBlock _Nonnull)completion;
+        [Export("createTokenWithPayment:completion:")]
+        void CreateTokenWithPayment(PKPayment payment, STPTokenCompletionBlock completion);
+
+        // -(void)createSourceWithPayment:(PKPayment * _Nonnull)payment completion:(STPSourceCompletionBlock _Nonnull)completion;
+        [Export("createSourceWithPayment:completion:")]
+        void CreateSourceWithPayment(PKPayment payment, STPSourceCompletionBlock completion);
     }
 
     // @interface STPAddress : NSObject <STPAPIResponseDecodable>
@@ -304,18 +315,17 @@ namespace Ricardo.Stripe.iOS
         [Export("ABRecordValue")]
         unsafe ABRecord ABRecordValue { get; }
 
-        // -(instancetype _Nonnull)initWithPKContact:(PKContact * _Nonnull)contact __attribute__((availability(ios, introduced=9.0)));
+        // -(instancetype _Nonnull)initWithPKContact:(PKContact * _Nonnull)contact __attribute__((availability(ios, introduced=9_0)));
         [Introduced(PlatformName.iOS, 9, 0)]
         [Export("initWithPKContact:")]
         IntPtr Constructor(PKContact contact);
 
-        // -(PKContact * _Nonnull)PKContactValue __attribute__((availability(ios, introduced=9.0)));
+        // -(PKContact * _Nonnull)PKContactValue __attribute__((availability(ios, introduced=9_0)));
         [Introduced(PlatformName.iOS, 9, 0)]
         [Export("PKContactValue")]
-        //[Verify(MethodToProperty)]
         PKContact PKContactValue { get; }
 
-        // -(instancetype _Nonnull)initWithCNContact:(CNContact * _Nonnull)contact __attribute__((availability(ios, introduced=9.0)));
+        // -(instancetype _Nonnull)initWithCNContact:(CNContact * _Nonnull)contact __attribute__((availability(ios, introduced=9_0)));
         [Introduced(PlatformName.iOS, 9, 0)]
         [Export("initWithCNContact:")]
         IntPtr Constructor(CNContact contact);
@@ -324,9 +334,17 @@ namespace Ricardo.Stripe.iOS
         [Export("containsRequiredFields:")]
         bool ContainsRequiredFields(STPBillingAddressFields requiredFields);
 
+        // -(BOOL)containsContentForBillingAddressFields:(STPBillingAddressFields)desiredFields;
+        [Export("containsContentForBillingAddressFields:")]
+        bool ContainsContentForBillingAddressFields(STPBillingAddressFields desiredFields);
+
         // -(BOOL)containsRequiredShippingAddressFields:(PKAddressField)requiredFields;
         [Export("containsRequiredShippingAddressFields:")]
         bool ContainsRequiredShippingAddressFields(PKAddressField requiredFields);
+
+        // -(BOOL)containsContentForShippingAddressFields:(PKAddressField)desiredFields;
+        [Export("containsContentForShippingAddressFields:")]
+        bool ContainsContentForShippingAddressFields(PKAddressField desiredFields);
 
         // +(PKAddressField)applePayAddressFieldsFromBillingAddressFields:(STPBillingAddressFields)billingAddressFields;
         [Static]
@@ -384,37 +402,37 @@ namespace Ricardo.Stripe.iOS
         [NullAllowed, Export("name")]
         string Name { get; set; }
 
-        // @property (copy, nonatomic) STPAddress * _Nonnull address;
-        [Export("address", ArgumentSemantic.Copy)]
+        // @property (nonatomic, strong) STPAddress * _Nonnull address;
+        [Export("address", ArgumentSemantic.Strong)]
         STPAddress Address { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressLine1;
-        [NullAllowed, Export("addressLine1")]
-        string AddressLine1 { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressLine2;
-        [NullAllowed, Export("addressLine2")]
-        string AddressLine2 { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressCity;
-        [NullAllowed, Export("addressCity")]
-        string AddressCity { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressState;
-        [NullAllowed, Export("addressState")]
-        string AddressState { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressZip;
-        [NullAllowed, Export("addressZip")]
-        string AddressZip { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressCountry;
-        [NullAllowed, Export("addressCountry")]
-        string AddressCountry { get; set; }
 
         // @property (copy, nonatomic) NSString * _Nullable currency;
         [NullAllowed, Export("currency")]
         string Currency { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable addressLine1 __attribute__((deprecated("Use address.line1")));
+        [NullAllowed, Export("addressLine1")]
+        string AddressLine1 { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable addressLine2 __attribute__((deprecated("Use address.line2")));
+        [NullAllowed, Export("addressLine2")]
+        string AddressLine2 { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable addressCity __attribute__((deprecated("Use address.city")));
+        [NullAllowed, Export("addressCity")]
+        string AddressCity { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable addressState __attribute__((deprecated("Use address.state")));
+        [NullAllowed, Export("addressState")]
+        string AddressState { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable addressZip __attribute__((deprecated("Use address.postalCode")));
+        [NullAllowed, Export("addressZip")]
+        string AddressZip { get; set; }
+
+        // @property (copy, nonatomic) NSString * _Nullable addressCountry __attribute__((deprecated("Use address.country")));
+        [NullAllowed, Export("addressCountry")]
+        string AddressCountry { get; set; }
     }
 
     // @interface STPCoreViewController : UIViewController
@@ -449,7 +467,7 @@ namespace Ricardo.Stripe.iOS
     [BaseType(typeof(NSObject))]
     interface STPSourceProtocol
     {
-        // @required @property (readonly, copy, nonatomic) NSString * _Nonnull stripeID;
+        // @required @property (readonly, nonatomic) NSString * _Nonnull stripeID;
         [Abstract]
         [Export("stripeID")]
         string StripeID { get; }
@@ -459,7 +477,7 @@ namespace Ricardo.Stripe.iOS
     [BaseType(typeof(NSObject))]
     interface STPCustomer : STPAPIResponseDecodable
     {
-        // +(instancetype _Nonnull)customerWithStripeID:(NSString * _Nonnull)stripeID defaultSource:(id<STPSourceProtocol> _Nullable)defaultSource sources:(NSArray<id<STPSourceProtocol>> * _Nonnull)sources __attribute__((deprecated("")));
+        // +(instancetype _Nonnull)customerWithStripeID:(NSString * _Nonnull)stripeID defaultSource:(id<STPSourceProtocol> _Nullable)defaultSource sources:(NSArray<id<STPSourceProtocol>> * _Nonnull)sources;
         [Static]
         [Export("customerWithStripeID:defaultSource:sources:")]
         STPCustomer CustomerWithStripeID(string stripeID, [NullAllowed] ISTPSourceProtocol defaultSource, ISTPSourceProtocol[] sources);
@@ -485,11 +503,11 @@ namespace Ricardo.Stripe.iOS
     [BaseType(typeof(NSObject))]
     interface STPCustomerDeserializer
     {
-        // -(instancetype _Nonnull)initWithData:(NSData * _Nullable)data urlResponse:(NSURLResponse * _Nullable)urlResponse error:(NSError * _Nullable)error __attribute__((deprecated("")));
+        // -(instancetype _Nonnull)initWithData:(NSData * _Nullable)data urlResponse:(NSURLResponse * _Nullable)urlResponse error:(NSError * _Nullable)error;
         [Export("initWithData:urlResponse:error:")]
         IntPtr Constructor([NullAllowed] NSData data, [NullAllowed] NSUrlResponse urlResponse, [NullAllowed] NSError error);
 
-        // -(instancetype _Nonnull)initWithJSONResponse:(id _Nonnull)json __attribute__((deprecated("")));
+        // -(instancetype _Nonnull)initWithJSONResponse:(id _Nonnull)json;
         [Export("initWithJSONResponse:")]
         IntPtr Constructor(NSObject json);
 
@@ -521,6 +539,14 @@ namespace Ricardo.Stripe.iOS
         [Abstract]
         [Export("selectDefaultCustomerSource:completion:")]
         void SelectDefaultCustomerSource(ISTPSourceProtocol source, STPErrorBlock completion);
+
+        // @optional -(void)detachSourceFromCustomer:(id<STPSourceProtocol> _Nonnull)source completion:(STPErrorBlock _Nullable)completion;
+        [Export("detachSourceFromCustomer:completion:")]
+        void DetachSourceFromCustomer(ISTPSourceProtocol source, [NullAllowed] STPErrorBlock completion);
+
+        // @optional -(void)updateCustomerWithShippingAddress:(STPAddress * _Nonnull)shipping completion:(STPErrorBlock _Nullable)completion;
+        [Export("updateCustomerWithShippingAddress:completion:")]
+        void UpdateCustomerWithShippingAddress(STPAddress shipping, [NullAllowed] STPErrorBlock completion);
     }
 
     // @protocol STPPaymentMethod <NSObject>
@@ -528,19 +554,19 @@ namespace Ricardo.Stripe.iOS
     [BaseType(typeof(NSObject))]
     interface STPPaymentMethod
     {
-        // @required @property (readonly, nonatomic) UIImage * image;
+        // @required @property (readonly, nonatomic, strong) UIImage * _Nonnull image;
         [Abstract]
-        [Export("image")]
+        [Export("image", ArgumentSemantic.Strong)]
         UIImage Image { get; }
 
-        // @required @property (readonly, nonatomic) UIImage * templateImage;
+        // @required @property (readonly, nonatomic, strong) UIImage * _Nonnull templateImage;
         [Abstract]
-        [Export("templateImage")]
+        [Export("templateImage", ArgumentSemantic.Strong)]
         UIImage TemplateImage { get; }
 
-        // @required @property (readonly, nonatomic) NSString * label;
+        // @required @property (readonly, nonatomic, strong) NSString * _Nonnull label;
         [Abstract]
-        [Export("label")]
+        [Export("label", ArgumentSemantic.Strong)]
         string Label { get; }
     }
 
@@ -696,6 +722,10 @@ namespace Ricardo.Stripe.iOS
         // @property (copy, nonatomic) NSString * _Nullable managedAccountCurrency;
         [NullAllowed, Export("managedAccountCurrency")]
         string ManagedAccountCurrency { get; set; }
+
+        // @property (nonatomic, strong) UIView * _Nullable customFooterView;
+        [NullAllowed, Export("customFooterView", ArgumentSemantic.Strong)]
+        UIView CustomFooterView { get; set; }
     }
 
     // @protocol STPAddCardViewControllerDelegate <NSObject>
@@ -714,21 +744,6 @@ namespace Ricardo.Stripe.iOS
         void AddCardViewController(STPAddCardViewController addCardViewController, STPToken token, STPErrorBlock completion);
     }
 
-    // @interface ApplePay (STPAPIClient)
-    [Category]
-    [BaseType(typeof(STPAPIClient))]
-    interface STPAPIClient_ApplePay
-    {
-        // -(void)createTokenWithPayment:(PKPayment * _Nonnull)payment completion:(STPTokenCompletionBlock _Nonnull)completion __attribute__((availability(ios, introduced=8.0)));
-        [Introduced(PlatformName.iOS, 8, 0)]
-        [Export("createTokenWithPayment:completion:")]
-        void CreateTokenWithPayment(PKPayment payment, STPTokenCompletionBlock completion);
-
-        // -(void)createSourceWithPayment:(PKPayment * _Nonnull)payment completion:(STPSourceCompletionBlock _Nonnull)completion;
-        [Export("createSourceWithPayment:completion:")]
-        void CreateSourceWithPayment(PKPayment payment, STPSourceCompletionBlock completion);
-    }
-
     // @interface STPApplePayPaymentMethod : NSObject <STPPaymentMethod>
     [BaseType(typeof(NSObject))]
     interface STPApplePayPaymentMethod : STPPaymentMethod
@@ -743,7 +758,7 @@ namespace Ricardo.Stripe.iOS
         [NullAllowed, Export("accountNumber")]
         string AccountNumber { get; set; }
 
-        // -(NSString * _Nullable)last4;
+        // @property (readonly, nonatomic) NSString * _Nullable last4;
         [NullAllowed, Export("last4")]
         string Last4 { get; }
 
@@ -763,79 +778,66 @@ namespace Ricardo.Stripe.iOS
         [NullAllowed, Export("accountHolderName")]
         string AccountHolderName { get; set; }
 
-        // @property (nonatomic) STPBankAccountHolderType accountHolderType;
+        // @property (assign, nonatomic) STPBankAccountHolderType accountHolderType;
         [Export("accountHolderType", ArgumentSemantic.Assign)]
         STPBankAccountHolderType AccountHolderType { get; set; }
     }
 
-    // @interface STPBankAccount : STPBankAccountParams <STPAPIResponseDecodable>
-    [BaseType(typeof(STPBankAccountParams))]
-    interface STPBankAccount : STPAPIResponseDecodable
+    // @interface STPBankAccount : NSObject <STPAPIResponseDecodable, STPSourceProtocol>
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
+    interface STPBankAccount : STPAPIResponseDecodable, STPSourceProtocol
     {
-        // @property (copy, nonatomic) NSString * _Nonnull routingNumber;
-        [Export("routingNumber")]
-        string RoutingNumber { get; set; }
+        // @property (readonly, nonatomic) NSString * _Nullable routingNumber;
+        [NullAllowed, Export("routingNumber")]
+        string RoutingNumber { get; }
 
-        // @property (copy, nonatomic) NSString * _Nullable country;
-        [NullAllowed, Export("country")]
-        string Country { get; set; }
+        // @property (readonly, nonatomic) NSString * _Nonnull country;
+        [Export("country")]
+        string Country { get; }
 
-        // @property (copy, nonatomic) NSString * _Nullable currency;
-        [NullAllowed, Export("currency")]
-        string Currency { get; set; }
+        // @property (readonly, nonatomic) NSString * _Nonnull currency;
+        [Export("currency")]
+        string Currency { get; }
 
-        // @property (readonly, nonatomic) NSString * _Nonnull bankAccountId;
-        [Export("bankAccountId")]
-        string BankAccountId { get; }
-
-        // @property (readonly, nonatomic) NSString * _Nullable last4;
-        [NullAllowed, Export("last4")]
+        // @property (readonly, nonatomic) NSString * _Nonnull last4;
+        [Export("last4")]
         string Last4 { get; }
 
-        // @property (readonly, nonatomic) NSString * _Nullable bankName;
-        [NullAllowed, Export("bankName")]
+        // @property (readonly, nonatomic) NSString * _Nonnull bankName;
+        [Export("bankName")]
         string BankName { get; }
 
-        // @property (copy, nonatomic) NSString * _Nullable accountHolderName;
+        // @property (readonly, nonatomic) NSString * _Nullable accountHolderName;
         [NullAllowed, Export("accountHolderName")]
-        string AccountHolderName { get; set; }
+        string AccountHolderName { get; }
 
-        // @property (nonatomic) STPBankAccountHolderType accountHolderType;
-        [Export("accountHolderType", ArgumentSemantic.Assign)]
-        STPBankAccountHolderType AccountHolderType { get; set; }
+        // @property (readonly, nonatomic) STPBankAccountHolderType accountHolderType;
+        [Export("accountHolderType")]
+        STPBankAccountHolderType AccountHolderType { get; }
 
         // @property (readonly, nonatomic) NSString * _Nullable fingerprint;
         [NullAllowed, Export("fingerprint")]
         string Fingerprint { get; }
 
+        // @property (readonly, copy, nonatomic) NSDictionary<NSString *,NSString *> * _Nullable metadata;
+        [NullAllowed, Export("metadata", ArgumentSemantic.Copy)]
+        NSDictionary<NSString, NSString> Metadata { get; }
+
         // @property (readonly, nonatomic) STPBankAccountStatus status;
         [Export("status")]
         STPBankAccountStatus Status { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nonnull bankAccountId __attribute__((deprecated("Use stripeID (defined in STPSourceProtocol)")));
+        [Export("bankAccountId")]
+        string BankAccountId { get; }
     }
 
-    // @interface STPCard : STPCardParams <STPAPIResponseDecodable, STPPaymentMethod, STPSourceProtocol>
-    [BaseType(typeof(STPCardParams))]
+    // @interface STPCard : NSObject <STPAPIResponseDecodable, STPPaymentMethod, STPSourceProtocol>
+    [BaseType(typeof(NSObject))]
+    [DisableDefaultCtor]
     interface STPCard : STPAPIResponseDecodable, STPPaymentMethod, STPSourceProtocol
     {
-        // -(instancetype _Nonnull)initWithID:(NSString * _Nonnull)cardID brand:(STPCardBrand)brand last4:(NSString * _Nonnull)last4 expMonth:(NSUInteger)expMonth expYear:(NSUInteger)expYear funding:(STPCardFundingType)funding;
-        [Export("initWithID:brand:last4:expMonth:expYear:funding:")]
-        IntPtr Constructor(string cardID, STPCardBrand brand, string last4, nuint expMonth, nuint expYear, STPCardFundingType funding);
-
-        // +(STPCardBrand)brandFromString:(NSString * _Nonnull)string;
-        [Static]
-        [Export("brandFromString:")]
-        STPCardBrand BrandFromString(string @string);
-
-        // +(NSString * _Nonnull)stringFromBrand:(STPCardBrand)brand;
-        [Static]
-        [Export("stringFromBrand:")]
-        string StringFromBrand(STPCardBrand brand);
-
-        // +(STPCardFundingType)fundingFromString:(NSString * _Nonnull)string;
-        [Static]
-        [Export("fundingFromString:")]
-        STPCardFundingType FundingFromString(string @string);
-
         // @property (readonly, nonatomic) NSString * _Nonnull last4;
         [Export("last4")]
         string Last4 { get; }
@@ -848,49 +850,21 @@ namespace Ricardo.Stripe.iOS
         [Export("isApplePayCard")]
         bool IsApplePayCard { get; }
 
-        // @property (nonatomic) NSUInteger expMonth;
+        // @property (readonly, nonatomic) NSUInteger expMonth;
         [Export("expMonth")]
-        nuint ExpMonth { get; set; }
+        nuint ExpMonth { get; }
 
-        // @property (nonatomic) NSUInteger expYear;
+        // @property (readonly, nonatomic) NSUInteger expYear;
         [Export("expYear")]
-        nuint ExpYear { get; set; }
+        nuint ExpYear { get; }
 
-        // @property (copy, nonatomic) NSString * _Nullable name;
+        // @property (readonly, nonatomic) NSString * _Nullable name;
         [NullAllowed, Export("name")]
-        string Name { get; set; }
+        string Name { get; }
 
-        // @property (copy, nonatomic) STPAddress * _Nullable address;
-        [NullAllowed, Export("address", ArgumentSemantic.Copy)]
-        STPAddress Address { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressLine1;
-        [NullAllowed, Export("addressLine1")]
-        string AddressLine1 { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressLine2;
-        [NullAllowed, Export("addressLine2")]
-        string AddressLine2 { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressCity;
-        [NullAllowed, Export("addressCity")]
-        string AddressCity { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressState;
-        [NullAllowed, Export("addressState")]
-        string AddressState { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressZip;
-        [NullAllowed, Export("addressZip")]
-        string AddressZip { get; set; }
-
-        // @property (copy, nonatomic) NSString * _Nullable addressCountry;
-        [NullAllowed, Export("addressCountry")]
-        string AddressCountry { get; set; }
-
-        // @property (readonly, nonatomic) NSString * _Nullable cardId;
-        [NullAllowed, Export("cardId")]
-        string CardId { get; }
+        // @property (readonly, nonatomic) STPAddress * _Nonnull address;
+        [Export("address")]
+        STPAddress Address { get; }
 
         // @property (readonly, nonatomic) STPCardBrand brand;
         [Export("brand")]
@@ -904,9 +878,60 @@ namespace Ricardo.Stripe.iOS
         [NullAllowed, Export("country")]
         string Country { get; }
 
-        // @property (copy, nonatomic) NSString * _Nullable currency;
+        // @property (readonly, nonatomic) NSString * _Nullable currency;
         [NullAllowed, Export("currency")]
-        string Currency { get; set; }
+        string Currency { get; }
+
+        // @property (readonly, copy, nonatomic) NSDictionary<NSString *,NSString *> * _Nullable metadata;
+        [NullAllowed, Export("metadata", ArgumentSemantic.Copy)]
+        NSDictionary<NSString, NSString> Metadata { get; }
+
+        // +(NSString * _Nonnull)stringFromBrand:(STPCardBrand)brand;
+        [Static]
+        [Export("stringFromBrand:")]
+        string StringFromBrand(STPCardBrand brand);
+
+        // +(STPCardBrand)brandFromString:(NSString * _Nonnull)string;
+        [Static]
+        [Export("brandFromString:")]
+        STPCardBrand BrandFromString(string @string);
+
+        // @property (readonly, nonatomic) NSString * _Nonnull cardId __attribute__((deprecated("Use stripeID (defined in STPSourceProtocol)")));
+        [Export("cardId")]
+        string CardId { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable addressLine1 __attribute__((deprecated("Use address.line1")));
+        [NullAllowed, Export("addressLine1")]
+        string AddressLine1 { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable addressLine2 __attribute__((deprecated("Use address.line2")));
+        [NullAllowed, Export("addressLine2")]
+        string AddressLine2 { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable addressCity __attribute__((deprecated("Use address.city")));
+        [NullAllowed, Export("addressCity")]
+        string AddressCity { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable addressState __attribute__((deprecated("Use address.state")));
+        [NullAllowed, Export("addressState")]
+        string AddressState { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable addressZip __attribute__((deprecated("Use address.postalCode")));
+        [NullAllowed, Export("addressZip")]
+        string AddressZip { get; }
+
+        // @property (readonly, nonatomic) NSString * _Nullable addressCountry __attribute__((deprecated("Use address.country")));
+        [NullAllowed, Export("addressCountry")]
+        string AddressCountry { get; }
+
+        // -(instancetype _Nonnull)initWithID:(NSString * _Nonnull)cardID brand:(STPCardBrand)brand last4:(NSString * _Nonnull)last4 expMonth:(NSUInteger)expMonth expYear:(NSUInteger)expYear funding:(STPCardFundingType)funding __attribute__((deprecated("You cannot directly instantiate an STPCard. You should only use one that has been returned from an STPAPIClient callback.")));
+        [Export("initWithID:brand:last4:expMonth:expYear:funding:")]
+        IntPtr Constructor(string cardID, STPCardBrand brand, string last4, nuint expMonth, nuint expYear, STPCardFundingType funding);
+
+        // +(STPCardFundingType)fundingFromString:(NSString * _Nonnull)string __attribute__((deprecated("")));
+        [Static]
+        [Export("fundingFromString:")]
+        STPCardFundingType FundingFromString(string @string);
     }
 
     // @interface STPCardValidator : NSObject
@@ -972,16 +997,6 @@ namespace Ricardo.Stripe.iOS
         [Static]
         [Export("validationStateForCard:")]
         STPCardValidationState ValidationStateForCard(STPCardParams card);
-
-        // +(STPCardValidationState)validationStateForExpirationYear:(NSString * _Nonnull)expirationYear inMonth:(NSString * _Nonnull)expirationMonth inCurrentYear:(NSInteger)currentYear currentMonth:(NSInteger)currentMonth;
-        [Static]
-        [Export("validationStateForExpirationYear:inMonth:inCurrentYear:currentMonth:")]
-        STPCardValidationState ValidationStateForExpirationYear(string expirationYear, string expirationMonth, nint currentYear, nint currentMonth);
-
-        // +(STPCardValidationState)validationStateForCard:(STPCardParams * _Nonnull)card inCurrentYear:(NSInteger)currentYear currentMonth:(NSInteger)currentMonth;
-        [Static]
-        [Export("validationStateForCard:inCurrentYear:currentMonth:")]
-        STPCardValidationState ValidationStateForCard(STPCardParams card, nint currentYear, nint currentMonth);
     }
 
     // @interface STPCustomerContext : NSObject <STPBackendAPIAdapter>
@@ -1328,15 +1343,15 @@ namespace Ricardo.Stripe.iOS
         [Export("initWithCustomerContext:configuration:theme:")]
         IntPtr Constructor(STPCustomerContext customerContext, STPPaymentConfiguration configuration, STPTheme theme);
 
-        // -(instancetype _Nonnull)initWithAPIAdapter:(id<STPBackendAPIAdapter> _Nonnull)apiAdapter __attribute__((deprecated("")));
+        // -(instancetype _Nonnull)initWithAPIAdapter:(id<STPBackendAPIAdapter> _Nonnull)apiAdapter;
         [Export("initWithAPIAdapter:")]
         IntPtr Constructor(ISTPBackendAPIAdapter apiAdapter);
 
-        // -(instancetype _Nonnull)initWithAPIAdapter:(id<STPBackendAPIAdapter> _Nonnull)apiAdapter configuration:(STPPaymentConfiguration * _Nonnull)configuration theme:(STPTheme * _Nonnull)theme __attribute__((deprecated("")));
+        // -(instancetype _Nonnull)initWithAPIAdapter:(id<STPBackendAPIAdapter> _Nonnull)apiAdapter configuration:(STPPaymentConfiguration * _Nonnull)configuration theme:(STPTheme * _Nonnull)theme;
         [Export("initWithAPIAdapter:configuration:theme:")]
         IntPtr Constructor(ISTPBackendAPIAdapter apiAdapter, STPPaymentConfiguration configuration, STPTheme theme);
 
-        // @property (readonly, nonatomic) id<STPBackendAPIAdapter> _Nonnull apiAdapter __attribute__((deprecated("")));
+        // @property (readonly, nonatomic) id<STPBackendAPIAdapter> _Nonnull apiAdapter;
         [Export("apiAdapter")]
         ISTPBackendAPIAdapter ApiAdapter { get; }
 
@@ -1407,6 +1422,14 @@ namespace Ricardo.Stripe.iOS
         // @property (assign, nonatomic) UIModalPresentationStyle modalPresentationStyle;
         [Export("modalPresentationStyle", ArgumentSemantic.Assign)]
         UIModalPresentationStyle ModalPresentationStyle { get; set; }
+
+        // @property (nonatomic, strong) UIView * _Nonnull paymentMethodsViewControllerFooterView;
+        [Export("paymentMethodsViewControllerFooterView", ArgumentSemantic.Strong)]
+        UIView PaymentMethodsViewControllerFooterView { get; set; }
+
+        // @property (nonatomic, strong) UIView * _Nonnull addCardViewControllerFooterView;
+        [Export("addCardViewControllerFooterView", ArgumentSemantic.Strong)]
+        UIView AddCardViewControllerFooterView { get; set; }
 
         // -(void)retryLoading;
         [Export("retryLoading")]
@@ -1483,13 +1506,21 @@ namespace Ricardo.Stripe.iOS
         [Export("initWithConfiguration:theme:customerContext:delegate:")]
         IntPtr Constructor(STPPaymentConfiguration configuration, STPTheme theme, STPCustomerContext customerContext, STPPaymentMethodsViewControllerDelegate @delegate);
 
-        // -(instancetype _Nonnull)initWithConfiguration:(STPPaymentConfiguration * _Nonnull)configuration theme:(STPTheme * _Nonnull)theme apiAdapter:(id<STPBackendAPIAdapter> _Nonnull)apiAdapter delegate:(id<STPPaymentMethodsViewControllerDelegate> _Nonnull)delegate __attribute__((deprecated("")));
+        // -(instancetype _Nonnull)initWithConfiguration:(STPPaymentConfiguration * _Nonnull)configuration theme:(STPTheme * _Nonnull)theme apiAdapter:(id<STPBackendAPIAdapter> _Nonnull)apiAdapter delegate:(id<STPPaymentMethodsViewControllerDelegate> _Nonnull)delegate;
         [Export("initWithConfiguration:theme:apiAdapter:delegate:")]
         IntPtr Constructor(STPPaymentConfiguration configuration, STPTheme theme, ISTPBackendAPIAdapter apiAdapter, STPPaymentMethodsViewControllerDelegate @delegate);
 
         // @property (nonatomic, strong) STPUserInformation * _Nullable prefilledInformation;
         [NullAllowed, Export("prefilledInformation", ArgumentSemantic.Strong)]
         STPUserInformation PrefilledInformation { get; set; }
+
+        // @property (nonatomic, strong) UIView * _Nonnull paymentMethodsViewControllerFooterView;
+        [Export("paymentMethodsViewControllerFooterView", ArgumentSemantic.Strong)]
+        UIView PaymentMethodsViewControllerFooterView { get; set; }
+
+        // @property (nonatomic, strong) UIView * _Nonnull addCardViewControllerFooterView;
+        [Export("addCardViewControllerFooterView", ArgumentSemantic.Strong)]
+        UIView AddCardViewControllerFooterView { get; set; }
 
         // -(void)dismissWithCompletion:(STPVoidBlock _Nullable)completion;
         [Export("dismissWithCompletion:")]
@@ -1525,8 +1556,8 @@ namespace Ricardo.Stripe.iOS
     delegate void STPRedirectContextCompletionBlock(string arg0, string arg1, NSError arg2);
 
     // @interface STPRedirectContext : NSObject
-    //[Unavailable(PlatformName.iOSAppExtension)]
-    //[Unavailable(PlatformName.MacOSXAppExtension)]
+    //[Unavailable (PlatformName.iOSAppExtension)]
+    //[Unavailable (PlatformName.MacOSXAppExtension)]
     [BaseType(typeof(NSObject))]
     [DisableDefaultCtor]
     interface STPRedirectContext
@@ -1543,7 +1574,7 @@ namespace Ricardo.Stripe.iOS
         [Export("startRedirectFlowFromViewController:")]
         void StartRedirectFlowFromViewController(UIViewController presentingViewController);
 
-        // -(void)startSafariViewControllerRedirectFlowFromViewController:(UIViewController * _Nonnull)presentingViewController __attribute__((availability(ios, introduced=9.0)));
+        // -(void)startSafariViewControllerRedirectFlowFromViewController:(UIViewController * _Nonnull)presentingViewController __attribute__((availability(ios, introduced=9_0)));
         [Introduced(PlatformName.iOS, 9, 0)]
         [Export("startSafariViewControllerRedirectFlowFromViewController:")]
         void StartSafariViewControllerRedirectFlowFromViewController(UIViewController presentingViewController);
@@ -1635,6 +1666,10 @@ namespace Ricardo.Stripe.iOS
         // @property (readonly, nonatomic) STPSourceCard3DSecureStatus threeDSecure;
         [Export("threeDSecure")]
         STPSourceCard3DSecureStatus ThreeDSecure { get; }
+
+        // @property (readonly, nonatomic) BOOL isApplePayCard;
+        [Export("isApplePayCard")]
+        bool IsApplePayCard { get; }
     }
 
     // @interface STPSourceOwner : NSObject <STPAPIResponseDecodable>
@@ -1788,9 +1823,9 @@ namespace Ricardo.Stripe.iOS
         [Export("livemode")]
         bool Livemode { get; }
 
-        // @property (readonly, nonatomic) NSDictionary * _Nullable metadata;
-        [NullAllowed, Export("metadata")]
-        NSDictionary Metadata { get; }
+        // @property (readonly, copy, nonatomic) NSDictionary<NSString *,NSString *> * _Nullable metadata;
+        [NullAllowed, Export("metadata", ArgumentSemantic.Copy)]
+        NSDictionary<NSString, NSString> Metadata { get; }
 
         // @property (readonly, nonatomic) STPSourceOwner * _Nullable owner;
         [NullAllowed, Export("owner")]
@@ -1921,6 +1956,16 @@ namespace Ricardo.Stripe.iOS
         [Static]
         [Export("alipayParamsWithAmount:currency:returnURL:")]
         STPSourceParams AlipayParamsWithAmount(nuint amount, string currency, string returnURL);
+
+        // +(STPSourceParams * _Nonnull)alipayReusableParamsWithCurrency:(NSString * _Nonnull)currency returnURL:(NSString * _Nonnull)returnURL;
+        [Static]
+        [Export("alipayReusableParamsWithCurrency:returnURL:")]
+        STPSourceParams AlipayReusableParamsWithCurrency(string currency, string returnURL);
+
+        // +(STPSourceParams * _Nonnull)p24ParamsWithAmount:(NSUInteger)amount currency:(NSString * _Nonnull)currency email:(NSString * _Nonnull)email name:(NSString * _Nullable)name returnURL:(NSString * _Nonnull)returnURL;
+        [Static]
+        [Export("p24ParamsWithAmount:currency:email:name:returnURL:")]
+        STPSourceParams P24ParamsWithAmount(nuint amount, string currency, string email, [NullAllowed] string name, string returnURL);
     }
 
     // @interface STPToken : NSObject <STPAPIResponseDecodable, STPSourceProtocol>
@@ -1955,14 +2000,6 @@ namespace Ricardo.Stripe.iOS
         // extern NSString *const _Nonnull StripeDomain;
         [Field("StripeDomain", "__Internal")]
         NSString StripeDomain { get; }
-
-        // extern double StripeVersionNumber;
-        [Field("StripeVersionNumber", "__Internal")]
-        double StripeVersionNumber { get; }
-
-        // extern const unsigned char [] StripeVersionString;
-        [Field("StripeVersionString", "__Internal")]
-        NSString StripeVersionString { get; }
 
         // extern NSString *const _Nonnull STPErrorMessageKey;
         [Field("STPErrorMessageKey", "__Internal")]
@@ -2012,13 +2049,13 @@ namespace Ricardo.Stripe.iOS
         [Field("STPCardDeclined", "__Internal")]
         NSString STPCardDeclined { get; }
 
-        // extern STPCardErrorCode  _Nonnull const STPProcessingError;
-        [Field("STPProcessingError", "__Internal")]
-        NSString STPProcessingError { get; }
-
         // extern STPCardErrorCode  _Nonnull const STPIncorrectCVC;
         [Field("STPIncorrectCVC", "__Internal")]
         NSString STPIncorrectCVC { get; }
+
+        // extern STPCardErrorCode  _Nonnull const STPProcessingError;
+        [Field("STPProcessingError", "__Internal")]
+        NSString STPProcessingError { get; }
     }
 
     // @interface Stripe (NSError)
@@ -2031,66 +2068,6 @@ namespace Ricardo.Stripe.iOS
         [Export("stp_errorFromStripeResponse:")]
         [return: NullAllowed]
         NSError Stp_errorFromStripeResponse([NullAllowed] NSDictionary jsonDictionary);
-
-        // +(NSError * _Nonnull)stp_genericConnectionError;
-        [Static]
-        [Export("stp_genericConnectionError")]
-        //[Verify(MethodToProperty)]
-        NSError Stp_genericConnectionError { get; }
-
-        // +(NSError * _Nonnull)stp_genericFailedToParseResponseError;
-        [Static]
-        [Export("stp_genericFailedToParseResponseError")]
-        //[Verify(MethodToProperty)]
-        NSError Stp_genericFailedToParseResponseError { get; }
-
-        // +(NSString * _Nonnull)stp_cardErrorInvalidNumberUserMessage;
-        [Static]
-        [Export("stp_cardErrorInvalidNumberUserMessage")]
-        //[Verify(MethodToProperty)]
-        string Stp_cardErrorInvalidNumberUserMessage { get; }
-
-        // +(NSString * _Nonnull)stp_cardInvalidCVCUserMessage;
-        [Static]
-        [Export("stp_cardInvalidCVCUserMessage")]
-        //[Verify(MethodToProperty)]
-        string Stp_cardInvalidCVCUserMessage { get; }
-
-        // +(NSString * _Nonnull)stp_cardErrorInvalidExpMonthUserMessage;
-        [Static]
-        [Export("stp_cardErrorInvalidExpMonthUserMessage")]
-        //[Verify(MethodToProperty)]
-        string Stp_cardErrorInvalidExpMonthUserMessage { get; }
-
-        // +(NSString * _Nonnull)stp_cardErrorInvalidExpYearUserMessage;
-        [Static]
-        [Export("stp_cardErrorInvalidExpYearUserMessage")]
-        //[Verify(MethodToProperty)]
-        string Stp_cardErrorInvalidExpYearUserMessage { get; }
-
-        // +(NSString * _Nonnull)stp_cardErrorExpiredCardUserMessage;
-        [Static]
-        [Export("stp_cardErrorExpiredCardUserMessage")]
-        //[Verify(MethodToProperty)]
-        string Stp_cardErrorExpiredCardUserMessage { get; }
-
-        // +(NSString * _Nonnull)stp_cardErrorDeclinedUserMessage;
-        [Static]
-        [Export("stp_cardErrorDeclinedUserMessage")]
-        //[Verify(MethodToProperty)]
-        string Stp_cardErrorDeclinedUserMessage { get; }
-
-        // +(NSString * _Nonnull)stp_cardErrorProcessingErrorUserMessage;
-        [Static]
-        [Export("stp_cardErrorProcessingErrorUserMessage")]
-        //[Verify(MethodToProperty)]
-        string Stp_cardErrorProcessingErrorUserMessage { get; }
-
-        // +(NSString * _Nonnull)stp_unexpectedErrorMessage;
-        [Static]
-        [Export("stp_unexpectedErrorMessage")]
-        //[Verify(MethodToProperty)]
-        string Stp_unexpectedErrorMessage { get; }
     }
 
     // @interface Stripe_Theme (UINavigationBar)
@@ -2098,7 +2075,7 @@ namespace Ricardo.Stripe.iOS
     [BaseType(typeof(UINavigationBar))]
     interface UINavigationBar_Stripe_Theme
     {
-        // -(void)stp_setTheme:(STPTheme * _Nonnull)theme __attribute__((deprecated("")));
+        // -(void)stp_setTheme:(STPTheme * _Nonnull)theme __attribute__((deprecated("Use the `stp_theme` property.")));
         [Static]
         [Export("stp_setTheme:")]
         void Stp_setTheme(STPTheme theme);
