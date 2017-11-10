@@ -1,10 +1,9 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using ObjCRuntime;
 
 namespace Ricardo.Stripe.iOS
 {
-    using System.Runtime.InteropServices;
-
     [Native]
     public enum STPShippingType : long
     {
@@ -35,6 +34,24 @@ namespace Ricardo.Stripe.iOS
         Unknown
     }
 
+    static class CFunctions
+    {
+        // extern void linkSTPAPIClientApplePayCategory ();
+        [DllImport ("__Internal")]
+        //[Verify (PlatformInvoke)]
+        static extern void linkSTPAPIClientApplePayCategory ();
+
+        // extern void linkNSErrorCategory ();
+        [DllImport ("__Internal")]
+        //[Verify (PlatformInvoke)]
+        static extern void linkNSErrorCategory ();
+
+        // extern void linkUINavigationBarThemeCategory ();
+        [DllImport ("__Internal")]
+        //[Verify (PlatformInvoke)]
+        static extern void linkUINavigationBarThemeCategory ();
+    }
+
     [Native]
     public enum STPBillingAddressFields : long
     {
@@ -51,24 +68,6 @@ namespace Ricardo.Stripe.iOS
         All = ApplePay
     }
 
-    static class CFunctions
-    {
-        // extern void linkSTPAPIClientApplePayCategory ();
-        [DllImport ("__Internal")]
-         //[Verify (PlatformInvoke)]
-        static extern void linkSTPAPIClientApplePayCategory ();
-
-        // extern void linkNSErrorCategory ();
-        [DllImport ("__Internal")]
-         //[Verify (PlatformInvoke)]
-        static extern void linkNSErrorCategory ();
-
-        // extern void linkUINavigationBarThemeCategory ();
-        [DllImport ("__Internal")]
-         //[Verify (PlatformInvoke)]
-        static extern void linkUINavigationBarThemeCategory ();
-    }
-
     [Native]
     public enum STPBankAccountHolderType : long
     {
@@ -82,6 +81,7 @@ namespace Ricardo.Stripe.iOS
         New,
         Validated,
         Verified,
+        VerificationFailed,
         Errored
     }
 
@@ -133,24 +133,6 @@ namespace Ricardo.Stripe.iOS
     }
 
     [Native]
-    public enum STPSourceRedirectStatus : long
-    {
-        Pending,
-        Succeeded,
-        Failed,
-        Unknown
-    }
-
-    [Native]
-    public enum STPSourceVerificationStatus : long
-    {
-        Pending,
-        Succeeded,
-        Failed,
-        Unknown
-    }
-
-    [Native]
     public enum STPSourceFlow : long
     {
         None,
@@ -191,6 +173,25 @@ namespace Ricardo.Stripe.iOS
         Sofort,
         ThreeDSecure,
         Alipay,
+        P24,
+        Unknown
+    }
+
+    [Native]
+    public enum STPSourceRedirectStatus : long
+    {
+        Pending,
+        Succeeded,
+        Failed,
+        Unknown
+    }
+
+    [Native]
+    public enum STPSourceVerificationStatus : long
+    {
+        Pending,
+        Succeeded,
+        Failed,
         Unknown
     }
 
