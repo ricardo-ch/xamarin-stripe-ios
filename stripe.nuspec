@@ -3,13 +3,13 @@
     <metadata>
         <!-- Required elements-->
         <id>Ricardo.Stripe.iOS</id>
-        <version>11.5.0</version>
+        <version>11.5.1</version>
         <description>Xamarin Binding Library - Stripe iOS SDK</description>
         <authors>Nicolas Bonnet, Branislav Havrila</authors>
         <owners>ricardo.ch AG</owners>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <title>Stripe iOS</title>
-        <releaseNotes>Stripe iOS SDK v11.5.0</releaseNotes>
+        <releaseNotes>Stripe iOS SDK v11.5.1</releaseNotes>
         <summary>Xamarin Binding Library - Stripe iOS SDK</summary>
         <licenseUrl>https://opensource.org/licenses/MIT</licenseUrl>
         <projectUrl>https://github.com/ricardo-ch/xamarin-stripe-ios/</projectUrl>
